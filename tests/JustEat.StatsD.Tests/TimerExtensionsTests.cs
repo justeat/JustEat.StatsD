@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Moq;
 using Shouldly;
@@ -137,7 +138,10 @@ namespace JustEat.StatsD
 
             // Assert
             timed.ShouldBeTrue();
-            publisher.Verify((p) => p.Timing(It.IsAny<long>(), 1, bucket), Times.Once());
+            publisher.Verify(
+                (p) => p.Timing(It.IsAny<long>(), 1, bucket,
+                    It.IsAny<IDictionary<string, string>>()),
+                    Times.Once());
         }
 
         [Fact]
@@ -160,7 +164,10 @@ namespace JustEat.StatsD
 
             // Assert
             actual.ShouldBe(42);
-            publisher.Verify((p) => p.Timing(It.IsAny<long>(), 1, bucket), Times.Once());
+            publisher.Verify(
+                (p) => p.Timing(It.IsAny<long>(), 1, bucket,
+                    It.IsAny<IDictionary<string, string>>()),
+                    Times.Once());
         }
 
         [Fact]
@@ -187,7 +194,10 @@ namespace JustEat.StatsD
 
             // Assert
             timed.ShouldBeTrue();
-            publisher.Verify((p) => p.Timing(It.IsAny<long>(), 1, bucket), Times.Once());
+            publisher.Verify(
+                (p) => p.Timing(It.IsAny<long>(), 1, bucket,
+                    It.IsAny<IDictionary<string, string>>()),
+                    Times.Once());
         }
 
         [Fact]
@@ -210,7 +220,10 @@ namespace JustEat.StatsD
 
             // Assert
             actual.ShouldBe(42);
-            publisher.Verify((p) => p.Timing(It.IsAny<long>(), 1, bucket), Times.Once());
+            publisher.Verify(
+                (p) => p.Timing(It.IsAny<long>(), 1, bucket,
+                    It.IsAny<IDictionary<string, string>>()),
+                    Times.Once());
         }
     }
 }

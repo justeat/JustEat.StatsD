@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using JustEat.StatsD.Buffered;
 using JustEat.StatsD.EndpointLookups;
 
@@ -82,21 +83,21 @@ namespace JustEat.StatsD
         }
 
         /// <inheritdoc />
-        public void Increment(long value, double sampleRate, string bucket)
+        public void Increment(long value, double sampleRate, string bucket, IDictionary<string, string>? tags = null)
         {
-            _inner.Increment(value, sampleRate, bucket);
+            _inner.Increment(value, sampleRate, bucket, tags);
         }
 
         /// <inheritdoc />
-        public void Gauge(double value, string bucket)
+        public void Gauge(double value, string bucket, Operation operation = Operation.Set, IDictionary<string, string>? tags = null)
         {
-            _inner.Gauge(value, bucket);
+            _inner.Gauge(value, bucket, operation, tags);
         }
 
         /// <inheritdoc />
-        public void Timing(long duration, double sampleRate, string bucket)
+        public void Timing(long duration, double sampleRate, string bucket, IDictionary<string, string>? tags = null)
         {
-            _inner.Timing(duration, sampleRate, bucket);
+            _inner.Timing(duration, sampleRate, bucket, tags);
         }
 
         /// <inheritdoc />

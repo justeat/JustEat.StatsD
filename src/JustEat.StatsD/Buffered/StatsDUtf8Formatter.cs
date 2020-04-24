@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -37,7 +39,7 @@ namespace JustEat.StatsD.Buffered
             var buffer = new Buffer(destination);
 
             bool isFormattingSuccessful =
-                  TryWriteBucketNameWithColon(ref buffer, msg.StatBucket)
+                  TryWriteBucketNameWithColon(ref buffer, msg)
                && TryWritePayloadWithMessageKindSuffix(ref buffer, msg)
                && TryWriteSampleRateIfNeeded(ref buffer, sampleRate);
 
@@ -46,13 +48,33 @@ namespace JustEat.StatsD.Buffered
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool TryWriteBucketNameWithColon(ref Buffer buffer, string statBucket)
+        private bool TryWriteBucketNameWithColon(ref Buffer buffer, StatsDMessage msg)
         {
-            // prefix + msg.Bucket + ":"
+            // prefix + msg.Bucket + tags + ":"
 
             return buffer.TryWriteBytes(_utf8Prefix)
-                && buffer.TryWriteUtf8String(statBucket)
+                && buffer.TryWriteUtf8String(msg.StatBucket)
+                && TryWriteTags(ref buffer, msg.Tags)
                 && buffer.TryWriteByte((byte)':');
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool TryWriteTags(ref Buffer buffer, IDictionary<string, string>? tags)
+        {
+            // key=value,key=value
+
+            if (tags == null || tags.Count == 0)
+            {
+                return true;
+            }
+
+            var sb = new StringBuilder();
+            foreach (var tag in tags)
+            {
+                sb.AppendFormat(CultureInfo.InvariantCulture, ";{0}={1}", tag.Key, tag.Value);
+            }
+
+            return buffer.TryWriteUtf8String(sb.ToString());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -79,7 +101,19 @@ namespace JustEat.StatsD.Buffered
                         // check if magnitude is integral, integers are written significantly faster
                         bool isMagnitudeIntegral = msg.Magnitude == integralMagnitude;
 
-                        var successSoFar = isMagnitudeIntegral ?
+                        bool successSoFar = true;
+
+                        if (msg.Operation == Operation.Increment)
+                        {
+                            successSoFar &= buffer.TryWriteByte((byte) '+');
+                        }
+
+                        if (msg.Operation == Operation.Decrement)
+                        {
+                            successSoFar &= buffer.TryWriteByte((byte) '-');
+                        }
+
+                        successSoFar &= isMagnitudeIntegral ?
                             buffer.TryWriteInt64(integralMagnitude) :
                             buffer.TryWriteDouble(msg.Magnitude);
 

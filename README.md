@@ -23,15 +23,16 @@ We use this library within our components to publish [StatsD](http://github.com/
 
 ### Features
 
-* Easy to use
-* Robust and proven
+* Easy to use.
+* Robust and proven.
 * Tuned for high performance and low resource usage using [BenchmarkDotNet](https://benchmarkdotnet.org/). Typically zero allocation on sending a metric on target frameworks where `Span<T>` is available.
 * Works well with modern .NET apps - `async ... await`, .NET Core, .NET Standard 2.0.
 * Supports standard StatsD primitives: `Increment`, `Decrement`, `Timing` and `Gauge`.
+* Supports tagging on `Increment`, `Decrement`, `Timing` and `Gauge`.
 * Supports sample rate for cutting down of sends of high-volume metrics.
 * Helpers to make it easy to time a delegate such as a `Func<T>` or `Action<T>`, or a code block inside a `using` statement.
-* Send stats over UDP or IP
-* Send stats to a server by name or IP address
+* Send stats over UDP or IP.
+* Send stats to a server by name or IP address.
 
 #### Publishing statistics
 

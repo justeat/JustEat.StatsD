@@ -23,19 +23,19 @@ namespace JustEat.StatsD.Extensions
             DisposeCount++;
         }
 
-        public void Increment(long value, double sampleRate, string bucket)
+        public void Increment(long value, double sampleRate, string bucket, IDictionary<string, string>? tags)
         {
             CallCount++;
             BucketNames.Add(bucket);
         }
 
-        public void Gauge(double value, string bucket)
+        public void Gauge(double value, string bucket, Operation operation, IDictionary<string, string>? tags)
         {
             CallCount++;
             BucketNames.Add(bucket);
         }
 
-        public void Timing(long duration, double sampleRate, string bucket)
+        public void Timing(long duration, double sampleRate, string bucket, IDictionary<string, string>? tags)
         {
             CallCount++;
             LastDuration = TimeSpan.FromMilliseconds(duration);

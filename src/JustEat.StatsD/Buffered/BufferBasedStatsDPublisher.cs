@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace JustEat.StatsD.Buffered
 {
@@ -31,19 +32,23 @@ namespace JustEat.StatsD.Buffered
             _formatter = new StatsDUtf8Formatter(configuration.Prefix);
         }
 
-        public void Increment(long value, double sampleRate, string bucket)
+        public void Increment(long value, double sampleRate, string bucket, IDictionary<string, string>? tags = null)
         {
-            SendMessage(sampleRate, StatsDMessage.Counter(value, bucket));
+            SendMessage(sampleRate, StatsDMessage.Counter(value, bucket, tags));
         }
 
-        public void Gauge(double value, string bucket)
+        public void Gauge(
+            double value,
+            string bucket,
+            Operation operation = Operation.Set,
+            IDictionary<string, string>? tags = null)
         {
-            SendMessage(DefaultSampleRate, StatsDMessage.Gauge(value, bucket));
+            SendMessage(DefaultSampleRate, StatsDMessage.Gauge(value, bucket, tags, operation));
         }
 
-        public void Timing(long duration, double sampleRate, string bucket)
+        public void Timing(long duration, double sampleRate, string bucket, IDictionary<string, string>? tags = null)
         {
-            SendMessage(sampleRate, StatsDMessage.Timing(duration, bucket));
+            SendMessage(sampleRate, StatsDMessage.Timing(duration, bucket, tags));
         }
 
         private void SendMessage(double sampleRate, in StatsDMessage msg)
